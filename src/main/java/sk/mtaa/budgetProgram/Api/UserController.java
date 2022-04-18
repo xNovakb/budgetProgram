@@ -86,6 +86,9 @@ public class UserController {
                 .compact();
         Map<String, String> map = new HashMap<>();
         map.put("token", token);
+        map.put("id", ((Long) user.getId()).toString());
+        map.put("email", user.getEmail());
+        map.put("role", ((Integer) user.getRole()).toString());
         return map;
     }
 }
