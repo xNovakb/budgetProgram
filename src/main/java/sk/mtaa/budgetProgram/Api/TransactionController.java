@@ -40,6 +40,13 @@ public class TransactionController {
         }
     }
 
+    @GetMapping("/transactions/{userId}")
+    public ResponseEntity<List<Transaction>> getTransactionsById(@PathVariable("userId") Long userId){
+
+        List<Transaction> transactions = transactionRepository.findByAccountUserId(userId);
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    }
+
     @GetMapping("/transaction/account/{accountId}")
     public ResponseEntity<List<Transaction>> getTransactionsByAccount(@PathVariable("accountId") Long accountId){
         if (!accountRepository.existsById(accountId)) {
