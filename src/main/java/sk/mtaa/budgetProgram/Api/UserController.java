@@ -3,6 +3,7 @@ package sk.mtaa.budgetProgram.Api;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,6 @@ import sk.mtaa.budgetProgram.Models.User;
 import sk.mtaa.budgetProgram.Repository.UserRepository;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,7 +28,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<Map<String, String>> findByEmailAndPassword(@RequestBody User userRequest) {
         Optional<User> userData = userRepository.findByEmailAndPassword(userRequest.getEmail(), userRequest.getPassword());
         return userData.map(user -> new ResponseEntity<>(generateJWTToken(user), HttpStatus.OK))
@@ -62,13 +60,19 @@ public class UserController {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User with id = " + userId + "Not Found"));
 
-            String folder = "/photos/";
-            byte[] bytes = imageFile.getBytes();
-            Path path = Paths.get(folder + imageFile.getOriginalFilename());
-            Files.write(path, bytes);
+        userData.setPhoto(imageFile.getBytes());
 
-            userData.setPhoto(String.valueOf(path));
-            return new ResponseEntity<>(userRepository.save(userData), HttpStatus.OK);
+        return new ResponseEntity<>(userRepository.save(userData), HttpStatus.OK);
+    }
+
+    @GetMapping("/userPhoto/{userId}")
+    public ResponseEntity<byte[]> getFile(@PathVariable("userId") Long userId) {
+        User userData = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User with id = " + userId + "Not Found"));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename= hello.png")
+                .body(userData.getPhoto());
     }
 
     private Map<String, String> generateJWTToken(User user){

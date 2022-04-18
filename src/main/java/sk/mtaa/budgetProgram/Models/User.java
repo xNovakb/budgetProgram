@@ -1,5 +1,7 @@
 package sk.mtaa.budgetProgram.Models;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
@@ -18,7 +20,8 @@ public class User {
     @Column(name = "registered_at")
     private LocalDateTime registeredAt;
     @Column(name = "photo_url")
-    private String photo;
+    @Type(type="org.hibernate.type.BinaryType")
+    private byte[] photo;
     @Column(name = "role")
     private int role;
 
@@ -79,11 +82,11 @@ public class User {
         this.role = role;
     }
 
-    public String getPhoto() {
+    public byte[] getPhoto() {
         return photo;
     }
 
-    public void setPhoto(String photo) {
+    public void setPhoto(byte[] photo) {
         this.photo = photo;
     }
 
