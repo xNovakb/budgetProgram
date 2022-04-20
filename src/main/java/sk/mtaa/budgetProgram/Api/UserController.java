@@ -21,10 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Blob;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:12345")
 @RestController
@@ -72,13 +69,12 @@ public class UserController {
     }
 
     @GetMapping(value = "/userPhoto/{userId}", produces = { "image/jpg", "image/jpeg", "image/png" })
-    public ResponseEntity<ByteArrayResource> getFile(@PathVariable("userId") Long userId) {
+    public ResponseEntity<byte[]> getFile(@PathVariable("userId") Long userId) {
         User userData = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User with id = " + userId + "Not Found"));
 
-        byte[] bytes = userData.getPhoto();
-        return ResponseEntity.ok().body(new ByteArrayResource(bytes));
+        return ResponseEntity.ok().body(Base64.getEncoder().encode(userData.getPhoto()));
     }
 
     private Map<String, String> generateJWTToken(User user){
