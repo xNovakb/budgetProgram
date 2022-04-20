@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +15,7 @@ import sk.mtaa.budgetProgram.Models.User;
 import sk.mtaa.budgetProgram.Repository.UserRepository;
 
 import java.io.IOException;
+import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -70,9 +72,9 @@ public class UserController {
         User userData = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User with id = " + userId + "Not Found"));
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename= hello.png")
-                .body(userData.getPhoto());
+        byte[] image = userData.getPhoto();
+
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
     }
 
     private Map<String, String> generateJWTToken(User user){
