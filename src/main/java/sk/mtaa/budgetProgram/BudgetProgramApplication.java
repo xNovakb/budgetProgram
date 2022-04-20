@@ -13,12 +13,4 @@ public class BudgetProgramApplication {
 		SpringApplication.run(BudgetProgramApplication.class, args);
 	}
 
-	@Bean
-	public FilterRegistrationBean<AuthentificationFilter> filterFilterRegistrationBean(){
-		FilterRegistrationBean<AuthentificationFilter> registrationBean = new FilterRegistrationBean<>();
-		AuthentificationFilter authentificationFilter = new AuthentificationFilter();
-		registrationBean.setFilter(authentificationFilter);
-		registrationBean.addUrlPatterns("/api/*");
-		return registrationBean;
-	}
 }
