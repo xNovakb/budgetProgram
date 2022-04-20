@@ -3,6 +3,7 @@ package sk.mtaa.budgetProgram.Api;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,7 +15,10 @@ import sk.mtaa.budgetProgram.Constants.Constants;
 import sk.mtaa.budgetProgram.Models.User;
 import sk.mtaa.budgetProgram.Repository.UserRepository;
 
+import javax.annotation.Resource;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -67,14 +71,14 @@ public class UserController {
         return new ResponseEntity<>(userRepository.save(userData), HttpStatus.OK);
     }
 
-    @GetMapping("/userPhoto/{userId}")
-    public ResponseEntity<byte[]> getFile(@PathVariable("userId") Long userId) {
+    @GetMapping(value = "/userPhoto/{userId}", produces = { "image/jpg", "image/jpeg", "image/png" })
+    public ResponseEntity<ByteArrayResource> getFile(@PathVariable("userId") Long userId) {
         User userData = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User with id = " + userId + "Not Found"));
-        byte[] image = userData.getPhoto();
 
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
+        byte[] bytes = userData.getPhoto();
+        return ResponseEntity.ok().body(new ByteArrayResource(bytes));
     }
 
     private Map<String, String> generateJWTToken(User user){
