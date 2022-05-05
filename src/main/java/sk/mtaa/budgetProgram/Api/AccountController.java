@@ -3,6 +3,8 @@ package sk.mtaa.budgetProgram.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import sk.mtaa.budgetProgram.Models.Account;
@@ -23,7 +25,8 @@ public class AccountController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/accounts/{userId}")
+    @MessageMapping("/accounts/{userId}")
+    @SendTo("/topic/account")
     public ResponseEntity<List<Account>> getAllAccountsByUserId(@PathVariable(value = "userId") Long userId) {
         if (!userRepository.existsById(userId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -33,7 +36,8 @@ public class AccountController {
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
-    @GetMapping("/accounts/{userId}/{accountId}")
+    @MessageMapping("/accounts/{userId}/{accountId}")
+    @SendTo("/topic/account")
     public ResponseEntity<List<Account>> getAllAccountsByUserIdAndAccount(@PathVariable(value = "userId") Long userId,
                                                                           @PathVariable(value = "accountId") Long accountId) {
         if (!userRepository.existsById(userId)) {
@@ -44,7 +48,8 @@ public class AccountController {
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
-    @PostMapping("/account/{userId}")
+    @MessageMapping("/postAccount/{userId}")
+    @SendTo("/topic/account")
     public ResponseEntity<Account> createAccount(@PathVariable(value = "userId") long userId,
                                                  @RequestBody Account accountRequest) {
         Account account = userRepository.findById(userId).map(user -> {
@@ -56,7 +61,8 @@ public class AccountController {
         return new ResponseEntity<>(account, HttpStatus.CREATED);
     }
 
-    @PutMapping("/account/{accountId}")
+    @MessageMapping("/account/{accountId}")
+    @SendTo("/topic/account")
     public ResponseEntity<Account> updateComment(@PathVariable("accountId") long accountId,
                                                  @RequestBody Account accountRequest) {
         Account account = accountRepository.findById(accountId)
@@ -66,7 +72,8 @@ public class AccountController {
         return new ResponseEntity<>(accountRepository.save(account), HttpStatus.OK);
     }
 
-    @DeleteMapping("/user/{userId}/account/{accountId}")
+    @MessageMapping("/user/{userId}/account/{accountId}")
+    @SendTo("/topic/account")
     public ResponseEntity<List<Account>> deleteAccountOfUser(@PathVariable(value = "userId") long userId,
                                                              @PathVariable(value = "accountId") long accountId) {
         if (!userRepository.existsById(userId)) {

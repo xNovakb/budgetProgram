@@ -3,6 +3,8 @@ package sk.mtaa.budgetProgram.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import sk.mtaa.budgetProgram.Models.Account;
@@ -24,7 +26,8 @@ public class CategoryController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/category/{userId}")
+    @MessageMapping("/category/{userId}")
+    @SendTo("/topic/category")
     public ResponseEntity<List<Category>> findByUserId(@PathVariable("userId") Long userId){
 
         if (!userRepository.existsById(userId)) {
@@ -35,7 +38,8 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @PutMapping("/category/{categoryId}")
+    @MessageMapping("/putCategory/{categoryId}")
+    @SendTo("/topic/category")
     public ResponseEntity<Category> updateComment(@PathVariable("categoryId") long categoryId,
                                                  @RequestBody Category categoryRequest) {
 
@@ -47,7 +51,8 @@ public class CategoryController {
         return new ResponseEntity<>(categoryRepository.save(category), HttpStatus.OK);
     }
 
-    @PostMapping("/category/{id}")
+    @MessageMapping("/postCategory/{categoryId}")
+    @SendTo("/topic/category")
     public ResponseEntity<Category> createCategory(@PathVariable("id") Long userId, @RequestBody Category categoryRequest){
 
         Category category = userRepository.findById(userId).map(user -> {
@@ -60,7 +65,8 @@ public class CategoryController {
         return new ResponseEntity<>(category, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/category/{id}")
+    @MessageMapping("/deleteCategory/{categoryId}")
+    @SendTo("/topic/category")
     public ResponseEntity<List<Account>> deleteAccountOfUser(@PathVariable(value = "id") long categoryId) {
 
         if (!categoryRepository.existsById(categoryId)) {

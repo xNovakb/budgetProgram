@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import sk.mtaa.budgetProgram.Models.Transaction;
@@ -29,7 +31,8 @@ public class TransactionController {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    @GetMapping("/transaction/{transactionId}")
+    @MessageMapping("/transaction/{transactionId}")
+    @SendTo("/topic/transaction")
     public ResponseEntity<Transaction> getTransaction(@PathVariable("transactionId") Long transactionId){
 
         Optional<Transaction> transaction = transactionRepository.findById(transactionId);
@@ -40,14 +43,16 @@ public class TransactionController {
         }
     }
 
-    @GetMapping("/transactions/{userId}")
+    @MessageMapping("/transactions/{userId}")
+    @SendTo("/topic/transaction")
     public ResponseEntity<List<Transaction>> getTransactionsById(@PathVariable("userId") Long userId){
 
         List<Transaction> transactions = transactionRepository.findByAccountUserId(userId);
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
-    @GetMapping("/transaction/account/{accountId}")
+    @MessageMapping("/transaction/account/{accountId}")
+    @SendTo("/topic/transaction")
     public ResponseEntity<List<Transaction>> getTransactionsByAccount(@PathVariable("accountId") Long accountId){
         if (!accountRepository.existsById(accountId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -57,7 +62,8 @@ public class TransactionController {
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
-    @GetMapping("/transaction/category/{categoryId}")
+    @MessageMapping("/transaction/category/{categoryId}")
+    @SendTo("/topic/transaction")
     public ResponseEntity<List<Transaction>> getTransactionsByCategory(@PathVariable("categoryId") Long categoryId){
         if (!categoryRepository.existsById(categoryId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -67,14 +73,16 @@ public class TransactionController {
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
-    @GetMapping("/transaction/addedAt")
+    @MessageMapping("/transaction/addedAt")
+    @SendTo("/topic/transaction")
     public ResponseEntity<List<Transaction>> getTransactionsByMonth(@RequestParam("monthStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime monthStart,
                                                                     @RequestParam("monthEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime monthEnd){
 
         return new ResponseEntity<>(transactionRepository.findByAddedAtBetween(monthStart, monthEnd), HttpStatus.OK);
     }
 
-    @PutMapping("/transaction/{transactionId}")
+    @MessageMapping("/putTransaction/{transactionId}")
+    @SendTo("/topic/transaction")
     public ResponseEntity<Transaction> updateComment(@PathVariable("transactionId") long transactionId,
                                                   @RequestBody Transaction transactionRequest) {
 
@@ -91,7 +99,8 @@ public class TransactionController {
         return new ResponseEntity<>(transactionRepository.save(transaction), HttpStatus.OK);
     }
 
-    @PostMapping("/transaction/{accountId}/{categoryId}")
+    @MessageMapping("/transaction/{accountId}/{categoryId}")
+    @SendTo("/topic/transaction")
     public ResponseEntity<Transaction> createTransaction(@PathVariable("accountId") Long accountId,
                                                          @PathVariable("categoryId") Long categoryId,
                                                          @RequestBody Transaction transactionRequest){
@@ -114,7 +123,8 @@ public class TransactionController {
         return new ResponseEntity<>(transactionRequest, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/transaction/{transactionId}")
+    @MessageMapping("/deleteTransaction/{transactionId}")
+    @SendTo("/topic/transaction")
     public ResponseEntity<Transaction> deleteTransaction(@PathVariable(value = "transactionId") long transactionId) {
 
         if (!transactionRepository.existsById(transactionId)) {

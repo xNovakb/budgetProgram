@@ -8,6 +8,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -57,7 +59,8 @@ public class UserController {
         }
     }
 
-    @PutMapping("/uploadPhoto/{userId}")
+    @MessageMapping("/uploadPhoto/{userId}")
+    @SendTo("/topic/picture")
     public ResponseEntity<User> uploadPhoto(@RequestParam("imageFile") MultipartFile imageFile, @PathVariable("userId") Long userId) throws IOException {
         User userData = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -68,7 +71,8 @@ public class UserController {
         return new ResponseEntity<>(userRepository.save(userData), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/userPhoto/{userId}", produces = { "image/jpg", "image/jpeg", "image/png" })
+    @MessageMapping(value = "/userPhoto/{userId}")
+    @SendTo("/topic/picture")
     public ResponseEntity<byte[]> getFile(@PathVariable("userId") Long userId) {
         User userData = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(
