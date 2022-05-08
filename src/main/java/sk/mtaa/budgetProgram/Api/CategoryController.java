@@ -51,7 +51,7 @@ public class CategoryController {
         return new ResponseEntity<>(categoryRepository.save(category), HttpStatus.OK);
     }
 
-    @MessageMapping("/postCategory/{categoryId}")
+    @MessageMapping("/postCategory/{id}")
     @SendTo("/topic/category")
     public ResponseEntity<Category> createCategory(@PathVariable("id") Long userId, @RequestBody Category categoryRequest){
 
@@ -65,7 +65,7 @@ public class CategoryController {
         return new ResponseEntity<>(category, HttpStatus.CREATED);
     }
 
-    @MessageMapping("/deleteCategory/{categoryId}")
+    @MessageMapping("/deleteCategory/{id}")
     @SendTo("/topic/category")
     public ResponseEntity<List<Account>> deleteAccountOfUser(@PathVariable(value = "id") long categoryId) {
 
