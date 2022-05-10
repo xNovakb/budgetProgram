@@ -53,7 +53,7 @@ public class CategoryController {
 
     @MessageMapping("/postCategory/{id}")
     @SendTo("/topic/category")
-    public ResponseEntity<Category> createCategory(@PathVariable("id") Long userId, @RequestBody Category categoryRequest){
+    public Category createCategory(@PathVariable("id") Long userId, @RequestBody Category categoryRequest){
         Category category = userRepository.findById(userId).map(user -> {
             categoryRequest.setUser(user);
             categoryRequest.setAddedAt(LocalDateTime.now());
@@ -61,7 +61,7 @@ public class CategoryController {
         }).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "User with id = " + userId + "Not Found"));
 
-        return new ResponseEntity<>(categoryRepository.save(category), HttpStatus.OK);
+        return categoryRepository.save(categoryRequest);
     }
 
     @MessageMapping("/deleteCategory/{id}")
