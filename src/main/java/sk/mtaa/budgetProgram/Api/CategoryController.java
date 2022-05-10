@@ -52,6 +52,7 @@ public class CategoryController {
     }
 
     @MessageMapping("/postCategory/{id}")
+    @PostMapping("/postCategory/{id}")
     @SendTo("/topic/category")
     public Category createCategory(@PathVariable("id") Long userId, @RequestBody Category categoryRequest){
         System.out.println("Catgory " + categoryRequest);
