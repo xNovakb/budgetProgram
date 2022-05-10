@@ -33,7 +33,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @MessageMapping("/category/{userId}")
+    @GetMapping("/category/{userId}")
     @SendTo("/topic/category")
     public ResponseEntity<List<Category>> findByUserId(@PathVariable("userId") Long userId){
 
