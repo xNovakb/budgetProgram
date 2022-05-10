@@ -60,7 +60,7 @@ public class CategoryController {
 
     @MessageMapping("/postCategory")
     @SendTo("/topic/category")
-    public Category createCategory(@RequestParam() Long userId, @RequestBody Category categoryRequest){
+    public Category createCategory(@RequestBody Category categoryRequest, @RequestParam() Long userId){
         System.out.println(categoryRequest);
         return categoryService.createCategory(userId, categoryRequest);
     }
