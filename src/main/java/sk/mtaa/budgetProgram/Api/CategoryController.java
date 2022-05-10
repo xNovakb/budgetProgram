@@ -65,9 +65,9 @@ public class CategoryController {
         return categoryService.createCategory(categoryRequest.getId(), categoryRequest);
     }
 
-    @MessageMapping("/deleteCategory/{id}")
+    @MessageMapping("/deleteCategory")
     @SendTo("/topic/category")
-    public ResponseEntity<List<Account>> deleteAccountOfUser(@PathVariable(value = "id") long categoryId) {
+    public ResponseEntity<List<Account>> deleteAccountOfUser(@RequestParam("id") Long categoryId) {
 
         if (!categoryRepository.existsById(categoryId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
