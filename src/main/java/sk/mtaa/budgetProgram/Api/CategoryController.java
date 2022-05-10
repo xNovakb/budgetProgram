@@ -18,6 +18,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:12345")
 @RestController
+@RequestMapping("/api")
 public class CategoryController {
 
     @Autowired
