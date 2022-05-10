@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import sk.mtaa.budgetProgram.Api.Service.CategoryService;
 import sk.mtaa.budgetProgram.Models.Account;
 import sk.mtaa.budgetProgram.Models.Category;
 import sk.mtaa.budgetProgram.Repository.CategoryRepository;
@@ -25,6 +26,9 @@ public class CategoryController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @MessageMapping("/category/{userId}")
     @SendTo("/topic/category")
@@ -54,14 +58,9 @@ public class CategoryController {
     @MessageMapping("/postCategory/{id}")
     @SendTo("/topic/category")
     public Category createCategory(@PathVariable("id") Long userId, @RequestBody Category categoryRequest){
-        Category category = userRepository.findById(userId).map(user -> {
-            categoryRequest.setUser(user);
-            categoryRequest.setAddedAt(LocalDateTime.now());
-            return categoryRepository.save(categoryRequest);
-        }).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "User with id = " + userId + "Not Found"));
+        Category category = categoryService.createCategory(userId, categoryRequest);
 
-        return categoryRepository.save(categoryRequest);
+        return categoryRepository.save(category);
     }
 
     @MessageMapping("/deleteCategory/{id}")
