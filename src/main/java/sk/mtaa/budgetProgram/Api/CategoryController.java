@@ -54,7 +54,7 @@ public class CategoryController {
     @MessageMapping("/postCategory/{id}")
     @SendTo("/topic/category")
     public Category createCategory(@PathVariable("id") Long userId, @RequestBody Category categoryRequest){
-
+        System.out.println("Catgory " + categoryRequest);
         Category category = userRepository.findById(userId).map(user -> {
             categoryRequest.setUser(user);
             categoryRequest.setAddedAt(LocalDateTime.now());
