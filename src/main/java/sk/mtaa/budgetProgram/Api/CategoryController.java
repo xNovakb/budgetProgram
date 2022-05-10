@@ -1,5 +1,6 @@
 package sk.mtaa.budgetProgram.Api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +59,8 @@ public class CategoryController {
     @MessageMapping("/postCategory/{id}")
     @PostMapping("/postCategory/{id}")
     @SendTo("/topic/category")
-    public Category createCategory(@PathVariable("id") Long userId, @RequestBody Category categoryRequest){
+    public Category createCategory( @RequestBody Category categoryRequest){
+        Long userId = 202L;
         System.out.println("asdasdsadsadasdasdasdasdsadasdsadsadasdsadsadas");
         return categoryService.createCategory(userId, categoryRequest);
     }
