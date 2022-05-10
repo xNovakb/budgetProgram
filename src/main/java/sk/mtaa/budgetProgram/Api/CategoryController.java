@@ -58,12 +58,12 @@ public class CategoryController {
         return new ResponseEntity<>(categoryRepository.save(category), HttpStatus.OK);
     }
 
-    @MessageMapping("/postCategory")
+    @MessageMapping("/postCategory/{id}")
+    @PostMapping("/postCategory/{id}")
     @SendTo("/topic/category")
-    public Category createCategory(@RequestBody Category categoryRequest){
+    public Category createCategory(@PathVariable("id") Long userId, @RequestBody Category categoryRequest){
         System.out.println(categoryRequest);
-        //return categoryService.createCategory(userId, categoryRequest);
-        return null;
+        return categoryService.createCategory(userId, categoryRequest);
     }
 
     @MessageMapping("/deleteCategory/{id}")
