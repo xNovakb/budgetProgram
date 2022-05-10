@@ -56,11 +56,11 @@ public class CategoryController {
     }
 
     @MessageMapping("/postCategory/{id}")
+    @GetMapping("/postCategory/{id}")
     @SendTo("/topic/category")
     public Category createCategory(@PathVariable("id") Long userId, @RequestBody Category categoryRequest){
-        Category category = categoryService.createCategory(userId, categoryRequest);
-
-        return categoryRepository.save(category);
+        System.out.println("asdasdsadsadasdasdasdasdsadasdsadsadasdsadsadas");
+        return categoryService.createCategory(userId, categoryRequest);
     }
 
     @MessageMapping("/deleteCategory/{id}")
