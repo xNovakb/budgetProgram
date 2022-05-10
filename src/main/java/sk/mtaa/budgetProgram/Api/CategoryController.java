@@ -58,10 +58,9 @@ public class CategoryController {
         return new ResponseEntity<>(categoryRepository.save(category), HttpStatus.OK);
     }
 
-    @MessageMapping("/postCategory/{id}")
-    @PostMapping("/postCategory/{id}")
+    @MessageMapping("/postCategory")
     @SendTo("/topic/category")
-    public Category createCategory(@PathVariable("id") Long userId, @RequestBody List<Category> categoryRequest){
+    public Category createCategory(@RequestBody Category categoryRequest){
         System.out.println(categoryRequest);
         //return categoryService.createCategory(userId, categoryRequest);
         return null;
