@@ -1,5 +1,6 @@
 package sk.mtaa.budgetProgram.Api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import sk.mtaa.budgetProgram.Models.Category;
 import sk.mtaa.budgetProgram.Repository.CategoryRepository;
 import sk.mtaa.budgetProgram.Repository.UserRepository;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,10 +61,10 @@ public class CategoryController {
     @MessageMapping("/postCategory/{id}")
     @PostMapping("/postCategory/{id}")
     @SendTo("/topic/category")
-    public Category createCategory( @RequestBody Category categoryRequest){
-        Long userId = 202L;
-        System.out.println("asdasdsadsadasdasdasdasdsadasdsadsadasdsadsadas");
-        return categoryService.createCategory(userId, categoryRequest);
+    public Category createCategory(@PathVariable("id") Long userId, @RequestBody List<Category> categoryRequest){
+        System.out.println(categoryRequest);
+        //return categoryService.createCategory(userId, categoryRequest);
+        return null;
     }
 
     @MessageMapping("/deleteCategory/{id}")
