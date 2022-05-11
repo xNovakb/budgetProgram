@@ -100,7 +100,7 @@ public class TransactionController {
         return new ResponseEntity<>(transactionRepository.save(transaction), HttpStatus.OK);
     }
 
-    @MessageMapping("/transaction")
+    @MessageMapping("/postTransaction")
     @SendTo("/topic/transaction")
     public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionDto transactionDtoRequest){
         Transaction transaction = new Transaction(transactionDtoRequest.getAmount(), transactionDtoRequest.getDescription(), transactionDtoRequest.isRecurring(), transactionDtoRequest.getRecurringDays(), transactionDtoRequest.getAddedAt());
