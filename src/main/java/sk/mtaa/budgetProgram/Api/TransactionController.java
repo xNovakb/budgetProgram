@@ -90,7 +90,6 @@ public class TransactionController {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Transaction with id = " + transactionRequest.getId() + "Not Found"));
 
-        transaction.getAccount().setValue(transaction.getAccount().getValue() - transaction.getAmount() + transactionRequest.getAmount());
         transaction.setAmount(transactionRequest.getAmount());
         transaction.setDescription(transactionRequest.getDescription());
         transaction.setRecurring(transactionRequest.isRecurring());
