@@ -25,9 +25,9 @@ public class AccountController {
     @Autowired
     private UserRepository userRepository;
 
-    @MessageMapping("/accounts/{userId}")
+    @MessageMapping("/accounts")
     @SendTo("/topic/account")
-    public ResponseEntity<List<Account>> getAllAccountsByUserId(@PathVariable(value = "userId") Long userId) {
+    public ResponseEntity<List<Account>> getAllAccountsByUserId(@RequestParam("id") Long userId) {
         if (!userRepository.existsById(userId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -48,35 +48,32 @@ public class AccountController {
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
-    @MessageMapping("/postAccount/{userId}")
+    @MessageMapping("/postAccount")
     @SendTo("/topic/account")
-    public ResponseEntity<Account> createAccount(@PathVariable(value = "userId") long userId,
-                                                 @RequestBody Account accountRequest) {
-        Account account = userRepository.findById(userId).map(user -> {
+    public ResponseEntity<Account> createAccount(@RequestBody Account accountRequest) {
+        Account account = userRepository.findById(accountRequest.getId()).map(user -> {
             accountRequest.setUser(user);
             accountRequest.setAdded_at(LocalDateTime.now());
             return accountRepository.save(accountRequest);
         }).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "User with id = " + userId + "Not Found"));
+                HttpStatus.NOT_FOUND, "User with id = " + accountRequest.getId() + "Not Found"));
         return new ResponseEntity<>(account, HttpStatus.CREATED);
     }
 
-    @MessageMapping("/account/{accountId}")
+    @MessageMapping("/account")
     @SendTo("/topic/account")
-    public ResponseEntity<Account> updateComment(@PathVariable("accountId") long accountId,
-                                                 @RequestBody Account accountRequest) {
-        Account account = accountRepository.findById(accountId)
+    public ResponseEntity<Account> updateComment( @RequestBody Account accountRequest) {
+        Account account = accountRepository.findById(accountRequest.getId())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Account with id = " + accountId + "Not Found"));
+                        HttpStatus.NOT_FOUND, "Account with id = " + accountRequest.getId() + "Not Found"));
         account.setValue(accountRequest.getValue());
         return new ResponseEntity<>(accountRepository.save(account), HttpStatus.OK);
     }
 
     @MessageMapping("/user/{userId}/account/{accountId}")
     @SendTo("/topic/account")
-    public ResponseEntity<List<Account>> deleteAccountOfUser(@PathVariable(value = "userId") long userId,
-                                                             @PathVariable(value = "accountId") long accountId) {
-        if (!userRepository.existsById(userId)) {
+    public ResponseEntity<List<Account>> deleteAccountOfUser(@RequestParam("id") Long accountId) {
+        if (!accountRepository.existsById(accountId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
