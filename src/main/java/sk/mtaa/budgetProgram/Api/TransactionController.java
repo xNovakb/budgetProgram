@@ -84,12 +84,11 @@ public class TransactionController {
 
     @MessageMapping("/putTransaction")
     @SendTo("/topic/transaction")
-    public ResponseEntity<Transaction> updateComment(@RequestParam("id") long transactionId,
-                                                  @RequestBody Transaction transactionRequest) {
+    public ResponseEntity<Transaction> updateComment(@RequestBody Transaction transactionRequest) {
 
-        Transaction transaction = transactionRepository.findById(transactionId)
+        Transaction transaction = transactionRepository.findById(transactionRequest.getId())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Transaction with id = " + transactionId + "Not Found"));
+                        HttpStatus.NOT_FOUND, "Transaction with id = " + transactionRequest.getId() + "Not Found"));
 
         transaction.getAccount().setValue(transaction.getAccount().getValue() - transaction.getAmount() + transactionRequest.getAmount());
         transaction.setAmount(transactionRequest.getAmount());
