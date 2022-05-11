@@ -70,7 +70,7 @@ public class AccountController {
         return new ResponseEntity<>(accountRepository.save(account), HttpStatus.OK);
     }
 
-    @MessageMapping("/user/{userId}/account/{accountId}")
+    @MessageMapping("/user/deleteAccount")
     @SendTo("/topic/account")
     public ResponseEntity<List<Account>> deleteAccountOfUser(@RequestParam("id") Long accountId) {
         if (!accountRepository.existsById(accountId)) {
