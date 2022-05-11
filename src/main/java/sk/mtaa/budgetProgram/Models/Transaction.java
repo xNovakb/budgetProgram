@@ -39,6 +39,14 @@ public class Transaction {
 
     }
 
+    public Transaction(float amount, String description, boolean isRecurring, int recurringDays, LocalDateTime addedAt) {
+        this.amount = amount;
+        this.description = description;
+        this.isRecurring = isRecurring;
+        this.recurringDays = recurringDays;
+        this.addedAt = addedAt;
+    }
+
     public Transaction(float amount, String description, boolean isRecurring, int recurringDays, LocalDateTime addedAt, Account account, Category category) {
         this.amount = amount;
         this.description = description;

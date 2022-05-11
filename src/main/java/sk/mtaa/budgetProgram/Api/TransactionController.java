@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import sk.mtaa.budgetProgram.DTO.TransactionDto;
 import sk.mtaa.budgetProgram.Models.Transaction;
 import sk.mtaa.budgetProgram.Repository.AccountRepository;
 import sk.mtaa.budgetProgram.Repository.CategoryRepository;
@@ -101,26 +102,25 @@ public class TransactionController {
 
     @MessageMapping("/transaction")
     @SendTo("/topic/transaction")
-    public ResponseEntity<Transaction> createTransaction(@RequestParam("accountId") Long accountId,
-                                                         @RequestParam("categoryId") Long categoryId,
-                                                         @RequestBody Transaction transactionRequest){
+    public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionDto transactionDtoRequest){
+        Transaction transaction = new Transaction(transactionDtoRequest.getAmount(), transactionDtoRequest.getDescription(), transactionDtoRequest.isRecurring(), transactionDtoRequest.getRecurringDays(), transactionDtoRequest.getAddedAt());
 
-        accountRepository.findById(accountId).map(account -> {
-            account.setValue(account.getValue() + transactionRequest.getAmount());
-            transactionRequest.setAccount(account);
-            transactionRequest.setAddedAt(LocalDateTime.now());
+        accountRepository.findById(transactionDtoRequest.getAccountId()).map(account -> {
+            account.setValue(account.getValue() + transaction.getAmount());
+            transaction.setAccount(account);
+            transaction.setAddedAt(LocalDateTime.now());
 
-            categoryRepository.findById(categoryId).map(category -> {
-                transactionRequest.setCategory(category);
-                return transactionRepository.save(transactionRequest);
+            categoryRepository.findById(transactionDtoRequest.getCategoryId()).map(category -> {
+                transaction.setCategory(category);
+                return transactionRepository.save(transaction);
             }).orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Category with id = " + categoryId + "Not Found"));
+                    HttpStatus.NOT_FOUND, "Category with id = " + transactionDtoRequest.getCategoryId() + "Not Found"));
 
-            return transactionRepository.save(transactionRequest);
+            return transactionRepository.save(transaction);
         }).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Account with id = " + accountId + "Not Found"));
+                HttpStatus.NOT_FOUND, "Account with id = " + transactionDtoRequest.getAccountId() + "Not Found"));
 
-        return new ResponseEntity<>(transactionRequest, HttpStatus.CREATED);
+        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
     }
 
     @MessageMapping("/deleteTransaction")
