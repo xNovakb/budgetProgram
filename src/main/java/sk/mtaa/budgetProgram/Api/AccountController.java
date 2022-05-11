@@ -25,9 +25,9 @@ public class AccountController {
     @Autowired
     private UserRepository userRepository;
 
-    @MessageMapping("/accounts")
+    @GetMapping("/accounts/{userId}")
     @SendTo("/topic/account")
-    public ResponseEntity<List<Account>> getAllAccountsByUserId(@RequestParam("id") Long userId) {
+    public ResponseEntity<List<Account>> getAllAccountsByUserId(@PathVariable("userId") Long userId) {
         if (!userRepository.existsById(userId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
