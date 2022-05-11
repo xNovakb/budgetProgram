@@ -99,10 +99,10 @@ public class TransactionController {
         return new ResponseEntity<>(transactionRepository.save(transaction), HttpStatus.OK);
     }
 
-    @MessageMapping("/transaction/{accountId}/{categoryId}")
+    @MessageMapping("/transaction")
     @SendTo("/topic/transaction")
-    public ResponseEntity<Transaction> createTransaction(@PathVariable("accountId") Long accountId,
-                                                         @PathVariable("categoryId") Long categoryId,
+    public ResponseEntity<Transaction> createTransaction(@RequestParam("accountId") Long accountId,
+                                                         @RequestParam("categoryId") Long categoryId,
                                                          @RequestBody Transaction transactionRequest){
 
         accountRepository.findById(accountId).map(account -> {
