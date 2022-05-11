@@ -60,7 +60,7 @@ public class AccountController {
         return new ResponseEntity<>(account, HttpStatus.CREATED);
     }
 
-    @MessageMapping("/account")
+    @MessageMapping("/putAccount")
     @SendTo("/topic/account")
     public ResponseEntity<Account> updateComment( @RequestBody Account accountRequest) {
         Account account = accountRepository.findById(accountRequest.getId())
