@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public class TransactionDto {
 
+    private Long id;
     private Long categoryId;
     private Long accountId;
     private float amount;
@@ -14,7 +15,8 @@ public class TransactionDto {
     private int recurringDays;
     private LocalDateTime addedAt;
 
-    public TransactionDto(Long categoryId, Long accountId, float amount, String description, boolean isRecurring, int recurringDays, LocalDateTime addedAt) {
+    public TransactionDto(Long id, Long categoryId, Long accountId, float amount, String description, boolean isRecurring, int recurringDays, LocalDateTime addedAt) {
+        this.id = id;
         this.categoryId = categoryId;
         this.accountId = accountId;
         this.amount = amount;
@@ -26,6 +28,14 @@ public class TransactionDto {
 
     public TransactionDto() {
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getCategoryId() {

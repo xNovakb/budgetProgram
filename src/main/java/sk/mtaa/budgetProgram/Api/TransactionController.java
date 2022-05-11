@@ -84,7 +84,7 @@ public class TransactionController {
 
     @MessageMapping("/putTransaction")
     @SendTo("/topic/transaction")
-    public ResponseEntity<Transaction> updateComment(@RequestBody Transaction transactionRequest) {
+    public ResponseEntity<Transaction> updateComment(@RequestBody TransactionDto transactionRequest) {
 
         Transaction transaction = transactionRepository.findById(transactionRequest.getId())
                 .orElseThrow(() -> new ResponseStatusException(
