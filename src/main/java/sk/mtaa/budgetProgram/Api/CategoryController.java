@@ -45,14 +45,13 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @MessageMapping("/putCategory/{categoryId}")
+    @MessageMapping("/putCategory")
     @SendTo("/topic/category")
-    public ResponseEntity<Category> updateComment(@PathVariable("categoryId") long categoryId,
-                                                 @RequestBody Category categoryRequest) {
+    public ResponseEntity<Category> updateComment(@RequestBody Category categoryRequest) {
 
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findById(categoryRequest.getId())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Category with id = " + categoryId + "Not Found"));
+                        HttpStatus.NOT_FOUND, "Category with id = " + categoryRequest.getId() + "Not Found"));
         category.setName(categoryRequest.getName());
 
         return new ResponseEntity<>(categoryRepository.save(category), HttpStatus.OK);
