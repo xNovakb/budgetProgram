@@ -32,7 +32,7 @@ public class TransactionController {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    @MessageMapping("/getTransaction")
+    @GetMapping("/getTransaction")
     @SendTo("/topic/transaction")
     public ResponseEntity<Transaction> getTransaction(@RequestParam("transactionId") Long transactionId){
 
@@ -44,7 +44,7 @@ public class TransactionController {
         }
     }
 
-    @MessageMapping("/getTransactions")
+    @GetMapping("/getTransactions")
     @SendTo("/topic/transaction")
     public ResponseEntity<List<Transaction>> getTransactionsById(@RequestParam("id") Long userId){
 
