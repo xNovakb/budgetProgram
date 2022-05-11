@@ -134,9 +134,6 @@ public class TransactionController {
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("TransactionId " + transactionId + "not found"));
 
-        transaction.getAccount().setValue(transaction.getAccount().getValue() + transaction.getAmount());
-
-        transactionRepository.save(transaction);
         transactionRepository.deleteById(transactionId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
